@@ -93,6 +93,68 @@ export default function CodeManager() {
       prev.filter((c) => c.id !== id)
     );
   }
+  async function excluirDisponiveis() {
+  const confirmar = confirm(
+    "Deseja excluir TODOS os códigos disponíveis?"
+  );
+
+  if (!confirmar) return;
+
+  const { error } = await supabase
+    .from("vote_codes")
+    .delete()
+    .eq("used", false);
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  alert("Códigos disponíveis excluídos!");
+  loadCodes();
+}
+
+async function excluirUtilizados() {
+  const confirmar = confirm(
+    "Deseja excluir TODOS os códigos utilizados?"
+  );
+
+  if (!confirmar) return;
+
+  const { error } = await supabase
+    .from("vote_codes")
+    .delete()
+    .eq("used", true);
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  alert("Códigos utilizados excluídos!");
+  loadCodes();
+}
+
+async function excluirTodos() {
+  const confirmar = confirm(
+    "ATENÇÃO! Isso excluirá TODOS os códigos."
+  );
+
+  if (!confirmar) return;
+
+  const { error } = await supabase
+    .from("vote_codes")
+    .delete()
+    .neq("id", "");
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  alert("Todos os códigos foram excluídos!");
+  loadCodes();
+}
 
   useEffect(() => {
     loadCodes();
@@ -102,9 +164,11 @@ export default function CodeManager() {
 
   const usados = codes.filter(
     (c) => c.used
-  ).length;
+  );
 
-  const disponiveis = totalCodigos - usados;
+  const disponiveis = codes.filter(
+    (c) => !c.used
+  );
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-yellow-50 p-6">
@@ -142,7 +206,7 @@ export default function CodeManager() {
             </h2>
 
             <p className="text-4xl font-extrabold text-green-600">
-              {disponiveis}
+              {disponiveis.length}
             </p>
           </div>
 
@@ -152,7 +216,7 @@ export default function CodeManager() {
             </h2>
 
             <p className="text-4xl font-extrabold text-red-600">
-              {usados}
+              {usados.length}
             </p>
           </div>
 
@@ -192,42 +256,104 @@ export default function CodeManager() {
           </div>
 
         </div>
+{/* EXCLUSÃO EM MASSA */}
+<div className="bg-white rounded-3xl shadow-xl p-6 border border-pink-200 mb-8">
 
-        {/* Lista */}
-        <div className="bg-white rounded-3xl shadow-xl p-6 border border-pink-200">
+  <h2 className="text-2xl font-bold text-black mb-4">
+    Limpeza de códigos
+  </h2>
 
-          <h2 className="text-2xl font-bold text-black mb-6">
-            Lista de códigos
-          </h2>
+  <div className="flex gap-4 flex-wrap">
 
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+    <button
+      onClick={excluirDisponiveis}
+      className="bg-green-600 hover:bg-green-700 text-white font-bold px-6 py-3 rounded-xl"
+    >
+      🟢 Excluir Disponíveis
+    </button>
 
-            {codes.map((item) => (
-              <div
-                key={item.id}
-                className={`rounded-2xl p-4 border shadow-md ${
-                  item.used
-                    ? "bg-red-50 border-red-300"
-                    : "bg-green-50 border-green-300"
-                }`}
-              >
-                <div className="flex justify-between items-center">
+    <button
+      onClick={excluirUtilizados}
+      className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-xl"
+    >
+      🔴 Excluir Utilizados
+    </button>
 
+    <button
+      onClick={excluirTodos}
+      className="bg-black hover:bg-zinc-800 text-white font-bold px-6 py-3 rounded-xl"
+    >
+      💣 Excluir Todos
+    </button>
+
+  </div>
+
+</div>
+        {/* LISTAS */}
+        <div className="grid lg:grid-cols-2 gap-8">
+
+          {/* DISPONÍVEIS */}
+          <div className="bg-white rounded-3xl shadow-xl p-6 border border-green-300">
+
+            <h2 className="text-2xl font-extrabold text-green-600 mb-6">
+              🟢 Códigos Disponíveis ({disponiveis.length})
+            </h2>
+
+            <div className="space-y-3 max-h-[700px] overflow-y-auto">
+
+              {disponiveis.map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-green-50 border border-green-300 rounded-2xl p-4 flex justify-between items-center"
+                >
                   <div>
                     <h3 className="font-extrabold text-xl text-black">
                       {item.code}
                     </h3>
 
-                    <p
-                      className={`font-bold ${
-                        item.used
-                          ? "text-red-600"
-                          : "text-green-600"
-                      }`}
-                    >
-                      {item.used
-                        ? "UTILIZADO"
-                        : "DISPONÍVEL"}
+                    <p className="font-bold text-green-600">
+                      DISPONÍVEL
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() =>
+                      excluirCodigo(item.id)
+                      
+                    }
+                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg font-bold"
+                  >
+                    🗑️
+                  </button>
+                  
+                </div>
+              ))}
+
+            </div>
+
+          </div>
+
+          {/* UTILIZADOS */}
+          <div className="bg-white rounded-3xl shadow-xl p-6 border border-red-300">
+
+            <h2 className="text-2xl font-extrabold text-red-600 mb-6">
+              🔴 Códigos Utilizados ({usados.length})
+            </h2>
+
+            <div className="space-y-3 max-h-[700px] overflow-y-auto">
+
+              {usados.map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-red-50 border border-red-300 rounded-2xl p-4 flex justify-between items-center"
+                >
+                  <div>
+                    <h3 className="font-extrabold text-xl text-black">
+                      {item.code}
+                    </h3>
+
+                    <p className="font-bold text-red-600">
+                      UTILIZADO
                     </p>
                   </div>
 
@@ -239,10 +365,10 @@ export default function CodeManager() {
                   >
                     🗑️
                   </button>
-
                 </div>
-              </div>
-            ))}
+              ))}
+
+            </div>
 
           </div>
 
@@ -251,5 +377,4 @@ export default function CodeManager() {
       </div>
     </main>
   );
-  
 }
