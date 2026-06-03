@@ -14,13 +14,17 @@ export async function POST(request: Request) {
     success: true,
   });
 
-  response.cookies.set("admin_auth", "true", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    path: "/",
-    maxAge: 60 * 60 * 24,
-  });
+  response.cookies.set(
+    "admin_auth",
+    process.env.ADMIN_TOKEN!,
+    {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+      maxAge: 60 * 60 * 24,
+    }
+  );
 
   return response;
 }
