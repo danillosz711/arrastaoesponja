@@ -178,18 +178,18 @@ export default function HomePage() {
       </div>
 
       <p className="text-center text-gray-500 text-sm mt-10">
-        📍 Arrastão do Esponja • Itanagra - BA • São João 2026
+         Concurso Gata do Esponja 2026
       </p>
 
       <p className="text-center text-gray-500 text-sm mt-2 mb-6">
-        Desenvolvido com <span className="text-red-500">❤️</span> por{" "}
+        Desenvolvido por{" "}
         <a
           href="https://instagram.com/SEU_INSTAGRAM"
           target="_blank"
           rel="noopener noreferrer"
           className="underline hover:text-pink-500"
         >
-          Danillo
+          DevDan
         </a>
       </p>
     </main>
