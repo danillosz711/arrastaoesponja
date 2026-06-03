@@ -93,6 +93,28 @@ export default function CodeManager() {
       prev.filter((c) => c.id !== id)
     );
   }
+  function exportarDisponiveis() {
+  const csv = [
+    ["Código"],
+    ...disponiveis.map((c) => [c.code]),
+  ]
+    .map((row) => row.join(";"))
+    .join("\n");
+
+  const blob = new Blob([csv], {
+    type: "text/csv;charset=utf-8;",
+  });
+
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "codigos-disponiveis.csv";
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
+
   async function excluirDisponiveis() {
   const confirmar = confirm(
     "Deseja excluir TODOS os códigos disponíveis?"
@@ -252,6 +274,12 @@ async function excluirTodos() {
                 ? "GERANDO..."
                 : "GERAR CÓDIGOS"}
             </button>
+            <button
+  onClick={exportarDisponiveis}
+  className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-xl"
+>
+  📊 Exportar Disponíveis
+</button>
 
           </div>
 
