@@ -184,7 +184,7 @@ export default function HomePage() {
       <p className="text-center text-gray-500 text-sm mt-2 mb-6">
         Desenvolvido por{" "}
         <a
-          href="https://instagram.com/SEU_INSTAGRAM"
+          href=""
           target="_blank"
           rel="noopener noreferrer"
           className="underline hover:text-pink-500"
