@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function AdminContent({
@@ -9,33 +8,15 @@ export default function AdminContent({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const [autorizado, setAutorizado] = useState(false);
 
-  useEffect(() => {
-    const logado = localStorage.getItem("admin_logado");
+  async function sair() {
+  await fetch("/api/admin-logout", {
+    method: "POST",
+  });
 
-    if (logado !== "true") {
-      router.push("/admin-login");
-      return;
-    }
-
-    setAutorizado(true);
-  }, [router]);
-
-  function sair() {
-    localStorage.removeItem("admin_logado");
-    router.push("/admin-login");
-  }
-
-  if (!autorizado) {
-    return (
-      <main className="min-h-screen bg-black flex items-center justify-center">
-        <h1 className="text-white text-2xl">
-          Verificando acesso...
-        </h1>
-      </main>
-    );
-  }
+  router.push("/admin-login");
+  router.refresh();
+}
 
   return (
     <>

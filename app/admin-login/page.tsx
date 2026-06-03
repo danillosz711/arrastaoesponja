@@ -33,7 +33,7 @@ export default function AdminLoginPage() {
       return;
     }
 
-    localStorage.setItem("admin_logado", "true");
+    
 
     router.push("/admin");
   }
