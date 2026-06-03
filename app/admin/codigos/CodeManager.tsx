@@ -71,7 +71,39 @@ export default function CodeManager() {
 
     setLoading(false);
   }
+async function resetarVotacao() {
+  const confirmar = confirm(
+    "ATENÇÃO!\n\nIsso irá apagar TODOS os votos e reativar TODOS os códigos.\n\nDeseja continuar?"
+  );
 
+  if (!confirmar) return;
+
+  const { error: votosError } = await supabase
+    .from("votes")
+    .delete()
+    .not("id", "is", null);
+
+  if (votosError) {
+    alert(votosError.message);
+    return;
+  }
+
+  const { error: codigosError } = await supabase
+    .from("vote_codes")
+    .update({
+      used: false,
+      used_at: null,
+    })
+    .eq("used", true);
+
+  if (codigosError) {
+    alert(codigosError.message);
+    return;
+  }
+
+  alert("Votação resetada com sucesso!");
+  loadCodes();
+}
   async function excluirCodigo(id: string) {
     const confirmar = confirm(
       "Deseja excluir este código?"
@@ -280,6 +312,12 @@ async function excluirTodos() {
 >
   📊 Exportar Disponíveis
 </button>
+<button
+  onClick={resetarVotacao}
+  className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-3 rounded-xl"
+>
+  🔄 Resetar Votação
+</button>
 
           </div>
 
@@ -307,12 +345,7 @@ async function excluirTodos() {
       🔴 Excluir Utilizados
     </button>
 
-    <button
-      onClick={excluirTodos}
-      className="bg-black hover:bg-zinc-800 text-white font-bold px-6 py-3 rounded-xl"
-    >
-      💣 Excluir Todos
-    </button>
+    
 
   </div>
 
